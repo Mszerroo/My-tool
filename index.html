@@ -2,12 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ToolsWaala – Free Offline Tools</title>
-  <meta name="description" content="Use ToolsWaala for offline PDF to Word (text) and Text to Speech – fast, free, no API." />
-  <meta name="keywords" content="pdf to word, text to speech, offline tools, toolswaala" />
+  <title>ToolsWaala – Free PDF to Word & Text to Speech Tools (Offline)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ToolsWaala offers free, fast, offline tools like PDF to Word and Text to Speech – no internet or API needed. Fully browser-based!" />
+  <meta name="keywords" content="PDF to Word, Text to Speech, free tools, offline tools, ToolsWaala, browser tools, no API tools" />
+  <meta name="author" content="ToolsWaala Team" />
+  <meta property="og:title" content="ToolsWaala – Free Offline Tools" />
+  <meta property="og:description" content="Free browser tools like PDF to Word converter and Text to Speech. Works offline!" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://yourusername.github.io/toolswaala/" />
+  <meta property="og:image" content="https://yourusername.github.io/toolswaala/og-image.jpg" />
+  <link rel="canonical" href="https://yourusername.github.io/toolswaala/" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    /* Modern UI Styling (Same as before) */
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -74,27 +83,43 @@
       color: #16a34a;
     }
   </style>
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "ToolsWaala",
+    "url": "https://yourusername.github.io/toolswaala/",
+    "description": "Free offline browser tools like PDF to Word converter and Text to Speech. Works without internet or API.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "ToolsWaala"
+    }
+  }
+  </script>
 </head>
 <body>
 
 <header>
   <h1>🛠 ToolsWaala</h1>
-  <p style="font-size: 1rem; color:#9ca3af;">Free, Fast & Offline Tools</p>
+  <p style="font-size: 1rem; color:#9ca3af;">Free, Fast & Offline Tools – No API Needed</p>
 </header>
 
 <main>
 
   <!-- PDF to Word Tool -->
-  <div class="tool">
-    <h2>📄 PDF to Word (Extract Text)</h2>
+  <section class="tool">
+    <h2>📄 PDF to Word Converter (Offline)</h2>
+    <p>Upload a PDF and instantly download the extracted text as a Word (.doc) file. No internet required.</p>
     <input type="file" id="pdfFile" accept="application/pdf" />
     <button onclick="extractPDFText()">Convert to Word</button>
     <div class="status" id="pdfStatus"></div>
-  </div>
+  </section>
 
   <!-- Text to Speech Tool -->
-  <div class="tool">
-    <h2>🔊 Text to Speech</h2>
+  <section class="tool">
+    <h2>🔊 Text to Speech (Browser-Based)</h2>
+    <p>Enter any text and let your browser speak it aloud. Fully offline – no API or server calls.</p>
     <textarea id="ttsText" rows="5" placeholder="Type your text here..."></textarea>
     <button onclick="speakText()">Speak</button>
     <div class="button-row">
@@ -102,7 +127,7 @@
       <button onclick="resumeSpeech()">▶️ Resume</button>
       <button onclick="stopSpeech()">🛑 Stop</button>
     </div>
-  </div>
+  </section>
 
 </main>
 
