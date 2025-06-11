@@ -3,142 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Use ToolsWaala's free online PDF to Word Converter and Text to Speech tool. Fast, secure, and SEO-optimized tools website." />
-  <meta name="keywords" content="PDF to Word, Text to Speech, Online Tools, ToolsWaala" />
-  <meta name="author" content="ToolsWaala" />
-  <meta property="og:title" content="ToolsWaala - PDF to Word & Text to Speech" />
-  <meta property="og:description" content="Free tools like PDF to Word Converter and Text to Speech. No sign-up needed." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://yourusername.github.io/toolswaala" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <title>ToolsWaala - PDF to Word & Text to Speech</title>
+  <meta name="description" content="Free PDF‑to‑Word & Text‑to‑Speech tools. No backend needed!" />
+  <meta name="keywords" content="PDF to Word, Text to Speech, online tools, Aspose, SpeechSynthesis" />
+  <title>ToolsWaala – PDF to Word & Text to Speech</title>
+  <script src="https://sdk.aspose.cloud/js/asposepdfcloud.js"></script>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-      color: #222;
-    }
-    header {
-      background: #1f2937;
-      color: #fff;
-      padding: 1rem;
-      text-align: center;
-    }
-    nav a {
-      margin: 0 10px;
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    main {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1rem;
-    }
-    section {
-      margin-bottom: 3rem;
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    h2 {
-      margin-top: 0;
-      color: #1f2937;
-    }
-    input[type=file],
-    textarea {
-      width: 100%;
-      margin: 1rem 0;
-      padding: 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 1rem;
-    }
-    button {
-      padding: 0.6rem 1.2rem;
-      background-color: #3b82f6;
-      border: none;
-      color: white;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #2563eb;
-    }
-    footer {
-      background: #1f2937;
-      color: #fff;
-      text-align: center;
-      padding: 1rem;
-      margin-top: 3rem;
-    }
+    body { font-family: sans-serif; margin:0; padding:0; background:#f0f0f0; }
+    header,footer { background:#333;color:#fff;text-align:center;padding:1rem; }
+    main { max-width:800px; margin:2rem auto; padding:1rem; }
+    section { background:#fff;padding:1.5rem; margin-bottom:2rem; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+    input, textarea, button { width:100%; padding:.75rem; margin-top:1rem; font-size:1rem; }
+    button { background:#007BFF;color:#fff;border:0;border-radius:5px;cursor:pointer; }
+    button:hover { background:#0056b3; }
   </style>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "ToolsWaala",
-    "url": "https://yourusername.github.io/toolswaala"
-  }
-  </script>
 </head>
 <body>
-
-  <header>
-    <h1>🛠️ ToolsWaala</h1>
-    <nav>
-      <a href="#pdf-to-word">PDF to Word</a>
-      <a href="#text-to-speech">Text to Speech</a>
-    </nav>
-  </header>
-
+  <header><h1>ToolsWaala</h1></header>
   <main>
     <!-- PDF to Word -->
-    <section id="pdf-to-word">
-      <h2>PDF to Word Converter</h2>
-      <p>Convert your PDF files to editable Word documents instantly and securely in your browser.</p>
-      <input type="file" id="pdfInput" accept="application/pdf" />
-      <button onclick="convertPDF()">Convert to Word</button>
-      <p id="pdfResult">*Note: In-browser PDF to Word conversion requires backend processing. This is a placeholder for demo UI.</p>
+    <section id="pdf2word">
+      <h2>Convert PDF → Word</h2>
+      <input type="file" id="pdfFile" accept="application/pdf" />
+      <button onclick="convertPdfToWord()">Convert & Download DOCX</button>
+      <p id="pdfStatus"></p>
     </section>
 
     <!-- Text to Speech -->
-    <section id="text-to-speech">
-      <h2>Text to Speech Tool</h2>
-      <p>Enter your text and convert it to natural sounding speech using your browser.</p>
-      <textarea id="ttsInput" rows="5" placeholder="Type text here..."></textarea>
-      <button onclick="speakText()">Speak</button>
+    <section id="tts">
+      <h2>Text to Speech</h2>
+      <textarea id="ttsText" rows="5" placeholder="Type something..."></textarea>
+      <button onclick="playTTS()">Speak Text</button>
+      <div>
+        <button onclick="pauseTTS()">Pause</button>
+        <button onclick="resumeTTS()">Resume</button>
+        <button onclick="stopTTS()">Stop</button>
+      </div>
     </section>
   </main>
-
-  <footer>
-    <p>&copy; 2025 ToolsWaala. All rights reserved.</p>
-  </footer>
+  <footer>&copy; 2025 ToolsWaala</footer>
 
   <script>
-    function convertPDF() {
-      const file = document.getElementById('pdfInput').files[0];
-      if (!file) {
-        alert('Please select a PDF file');
-        return;
-      }
-      alert('This is a placeholder. In-browser PDF to Word conversion requires a server or API.');
-      document.getElementById('pdfResult').textContent = `Selected file: ${file.name}`;
+    // === PDF to Word via Aspose.PDF for JavaScript ===
+    async function convertPdfToWord() {
+      const file = document.getElementById('pdfFile').files[0];
+      if (!file) return alert('Select a PDF first!');
+      document.getElementById('pdfStatus').textContent = 'Converting...';
+      const data = await file.arrayBuffer();
+      const result = await Aspose.Pdf.Api.PDFApi.PdfToDocx(new Uint8Array(data), {});
+      const blob = new Blob([result.body], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.name.replace(/\.pdf$/, '.docx');
+      a.click();
+      URL.revokeObjectURL(url);
+      document.getElementById('pdfStatus').textContent = 'Download ready.';
     }
 
-    function speakText() {
-      const text = document.getElementById('ttsInput').value;
-      if (!text) {
-        alert('Please enter text to speak.');
-        return;
-      }
-      const utterance = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(utterance);
+    // === Text to Speech using Web Speech API ===
+    let utter;
+    function playTTS() {
+      const text = document.getElementById('ttsText').value;
+      if (!text) return alert('Enter text to speak.');
+      utter = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utter);
     }
+    function pauseTTS() { window.speechSynthesis.pause(); }
+    function resumeTTS() { window.speechSynthesis.resume(); }
+    function stopTTS() { window.speechSynthesis.cancel(); }
   </script>
 </body>
 </html>
