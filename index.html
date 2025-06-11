@@ -3,74 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Free PDF‑to‑Word & Text‑to‑Speech tools. No backend needed!" />
-  <meta name="keywords" content="PDF to Word, Text to Speech, online tools, Aspose, SpeechSynthesis" />
-  <title>ToolsWaala – PDF to Word & Text to Speech</title>
-  <script src="https://sdk.aspose.cloud/js/asposepdfcloud.js"></script>
+  <meta name="description" content="Free offline PDF to Word (text) & Text to Speech tool - No API required!" />
+  <meta name="keywords" content="PDF to Word offline, Text to Speech browser, free tools" />
+  <title>ToolsWaala – Offline Tools</title>
   <style>
-    body { font-family: sans-serif; margin:0; padding:0; background:#f0f0f0; }
-    header,footer { background:#333;color:#fff;text-align:center;padding:1rem; }
-    main { max-width:800px; margin:2rem auto; padding:1rem; }
-    section { background:#fff;padding:1.5rem; margin-bottom:2rem; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
-    input, textarea, button { width:100%; padding:.75rem; margin-top:1rem; font-size:1rem; }
-    button { background:#007BFF;color:#fff;border:0;border-radius:5px;cursor:pointer; }
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; }
+    header, footer { background:#111; color:#fff; text-align:center; padding:1rem; }
+    main { max-width: 800px; margin: 2rem auto; padding: 1rem; }
+    section { background:#fff; padding:1.5rem; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); margin-bottom:2rem; }
+    h2 { margin-top: 0; }
+    input, textarea, button { width:100%; padding:10px; margin-top:10px; font-size:1rem; }
+    button { background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer; }
     button:hover { background:#0056b3; }
   </style>
 </head>
 <body>
-  <header><h1>ToolsWaala</h1></header>
+  <header><h1>🛠 ToolsWaala – Offline Tools</h1></header>
+
   <main>
     <!-- PDF to Word -->
-    <section id="pdf2word">
-      <h2>Convert PDF → Word</h2>
+    <section>
+      <h2>📄 PDF to Word (Text Extract)</h2>
+      <p>Select a PDF file. We'll extract the text and let you download it as a Word (.doc) file.</p>
       <input type="file" id="pdfFile" accept="application/pdf" />
-      <button onclick="convertPdfToWord()">Convert & Download DOCX</button>
-      <p id="pdfStatus"></p>
+      <button onclick="extractPDFText()">Convert to Word</button>
+      <p id="status"></p>
     </section>
 
     <!-- Text to Speech -->
-    <section id="tts">
-      <h2>Text to Speech</h2>
-      <textarea id="ttsText" rows="5" placeholder="Type something..."></textarea>
-      <button onclick="playTTS()">Speak Text</button>
-      <div>
-        <button onclick="pauseTTS()">Pause</button>
-        <button onclick="resumeTTS()">Resume</button>
-        <button onclick="stopTTS()">Stop</button>
+    <section>
+      <h2>🔊 Text to Speech</h2>
+      <textarea id="ttsText" rows="5" placeholder="Enter text..."></textarea>
+      <button onclick="speakText()">Speak</button>
+      <div style="margin-top:10px;">
+        <button onclick="pauseSpeech()">Pause</button>
+        <button onclick="resumeSpeech()">Resume</button>
+        <button onclick="stopSpeech()">Stop</button>
       </div>
     </section>
   </main>
-  <footer>&copy; 2025 ToolsWaala</footer>
 
+  <footer>&copy; 2025 ToolsWaala. All rights reserved.</footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
   <script>
-    // === PDF to Word via Aspose.PDF for JavaScript ===
-    async function convertPdfToWord() {
+    // PDF to Text to Word (offline)
+    async function extractPDFText() {
       const file = document.getElementById('pdfFile').files[0];
-      if (!file) return alert('Select a PDF first!');
-      document.getElementById('pdfStatus').textContent = 'Converting...';
-      const data = await file.arrayBuffer();
-      const result = await Aspose.Pdf.Api.PDFApi.PdfToDocx(new Uint8Array(data), {});
-      const blob = new Blob([result.body], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = file.name.replace(/\.pdf$/, '.docx');
-      a.click();
-      URL.revokeObjectURL(url);
-      document.getElementById('pdfStatus').textContent = 'Download ready.';
+      if (!file) return alert('Please select a PDF file!');
+      document.getElementById('status').textContent = 'Reading PDF...';
+
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const typedarray = new Uint8Array(this.result);
+        const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+        let fullText = '';
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map(item => item.str).join(' ');
+          fullText += `\n\n--- Page ${i} ---\n\n${pageText}`;
+        }
+
+        const blob = new Blob([fullText], { type: 'application/msword' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name.replace('.pdf', '.doc');
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById('status').textContent = 'Done! Download started.';
+      };
+      reader.readAsArrayBuffer(file);
     }
 
-    // === Text to Speech using Web Speech API ===
-    let utter;
-    function playTTS() {
+    // Text to Speech
+    function speakText() {
       const text = document.getElementById('ttsText').value;
-      if (!text) return alert('Enter text to speak.');
-      utter = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(utter);
+      if (!text) return alert('Enter some text first.');
+      const utterance = new SpeechSynthesisUtterance(text);
+      speechSynthesis.speak(utterance);
     }
-    function pauseTTS() { window.speechSynthesis.pause(); }
-    function resumeTTS() { window.speechSynthesis.resume(); }
-    function stopTTS() { window.speechSynthesis.cancel(); }
+
+    function pauseSpeech() { speechSynthesis.pause(); }
+    function resumeSpeech() { speechSynthesis.resume(); }
+    function stopSpeech() { speechSynthesis.cancel(); }
   </script>
 </body>
 </html>
