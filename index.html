@@ -3,92 +3,157 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Free offline PDF to Word (text) & Text to Speech tool - No API required!" />
-  <meta name="keywords" content="PDF to Word offline, Text to Speech browser, free tools" />
-  <title>ToolsWaala – Offline Tools</title>
+  <title>ToolsWaala – Free Offline Tools</title>
+  <meta name="description" content="Use ToolsWaala for offline PDF to Word (text) and Text to Speech – fast, free, no API." />
+  <meta name="keywords" content="pdf to word, text to speech, offline tools, toolswaala" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; }
-    header, footer { background:#111; color:#fff; text-align:center; padding:1rem; }
-    main { max-width: 800px; margin: 2rem auto; padding: 1rem; }
-    section { background:#fff; padding:1.5rem; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); margin-bottom:2rem; }
-    h2 { margin-top: 0; }
-    input, textarea, button { width:100%; padding:10px; margin-top:10px; font-size:1rem; }
-    button { background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer; }
-    button:hover { background:#0056b3; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f9f9fb;
+      color: #333;
+    }
+    header, footer {
+      background: #111827;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+    h1 { margin: 0; font-size: 1.8rem; }
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    .tool {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      margin-bottom: 2rem;
+    }
+    .tool h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      color: #1f2937;
+    }
+    input, textarea, button {
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+    @media (max-width: 600px) {
+      .button-row {
+        flex-direction: column;
+      }
+    }
+    .status {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #16a34a;
+    }
   </style>
 </head>
 <body>
-  <header><h1>🛠 ToolsWaala </h1></header>
 
-  <main>
-    <!-- PDF to Word -->
-    <section>
-      <h2>📄 PDF to Word (Text Extract)</h2>
-      <p>Select a PDF file. We'll extract the text and let you download it as a Word (.doc) file.</p>
-      <input type="file" id="pdfFile" accept="application/pdf" />
-      <button onclick="extractPDFText()">Convert to Word</button>
-      <p id="status"></p>
-    </section>
+<header>
+  <h1>🛠 ToolsWaala</h1>
+  <p style="font-size: 1rem; color:#9ca3af;">Free, Fast & Offline Tools</p>
+</header>
 
-    <!-- Text to Speech -->
-    <section>
-      <h2>🔊 Text to Speech</h2>
-      <textarea id="ttsText" rows="5" placeholder="Enter text..."></textarea>
-      <button onclick="speakText()">Speak</button>
-      <div style="margin-top:10px;">
-        <button onclick="pauseSpeech()">Pause</button>
-        <button onclick="resumeSpeech()">Resume</button>
-        <button onclick="stopSpeech()">Stop</button>
-      </div>
-    </section>
-  </main>
+<main>
 
-  <footer>&copy; 2025 ToolsWaala. All rights reserved.</footer>
+  <!-- PDF to Word Tool -->
+  <div class="tool">
+    <h2>📄 PDF to Word (Extract Text)</h2>
+    <input type="file" id="pdfFile" accept="application/pdf" />
+    <button onclick="extractPDFText()">Convert to Word</button>
+    <div class="status" id="pdfStatus"></div>
+  </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-  <script>
-    // PDF to Text to Word (offline)
-    async function extractPDFText() {
-      const file = document.getElementById('pdfFile').files[0];
-      if (!file) return alert('Please select a PDF file!');
-      document.getElementById('status').textContent = 'Reading PDF...';
+  <!-- Text to Speech Tool -->
+  <div class="tool">
+    <h2>🔊 Text to Speech</h2>
+    <textarea id="ttsText" rows="5" placeholder="Type your text here..."></textarea>
+    <button onclick="speakText()">Speak</button>
+    <div class="button-row">
+      <button onclick="pauseSpeech()">⏸ Pause</button>
+      <button onclick="resumeSpeech()">▶️ Resume</button>
+      <button onclick="stopSpeech()">🛑 Stop</button>
+    </div>
+  </div>
 
-      const reader = new FileReader();
-      reader.onload = async function () {
-        const typedarray = new Uint8Array(this.result);
-        const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
-        let fullText = '';
+</main>
 
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const textContent = await page.getTextContent();
-          const pageText = textContent.items.map(item => item.str).join(' ');
-          fullText += `\n\n--- Page ${i} ---\n\n${pageText}`;
-        }
+<footer>
+  &copy; 2025 ToolsWaala. Built with ❤️ for everyone.
+</footer>
 
-        const blob = new Blob([fullText], { type: 'application/msword' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = file.name.replace('.pdf', '.doc');
-        a.click();
-        URL.revokeObjectURL(url);
-        document.getElementById('status').textContent = 'Done! Download started.';
-      };
-      reader.readAsArrayBuffer(file);
-    }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script>
+  // PDF to Word (Extracted Text)
+  async function extractPDFText() {
+    const file = document.getElementById('pdfFile').files[0];
+    if (!file) return alert("Please choose a PDF file.");
+    const status = document.getElementById('pdfStatus');
+    status.textContent = "Extracting text...";
 
-    // Text to Speech
-    function speakText() {
-      const text = document.getElementById('ttsText').value;
-      if (!text) return alert('Enter some text first.');
-      const utterance = new SpeechSynthesisUtterance(text);
-      speechSynthesis.speak(utterance);
-    }
+    const reader = new FileReader();
+    reader.onload = async function () {
+      const typedarray = new Uint8Array(this.result);
+      const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const text = textContent.items.map(item => item.str).join(' ');
+        fullText += `\n\n--- Page ${i} ---\n\n${text}`;
+      }
 
-    function pauseSpeech() { speechSynthesis.pause(); }
-    function resumeSpeech() { speechSynthesis.resume(); }
-    function stopSpeech() { speechSynthesis.cancel(); }
-  </script>
+      const blob = new Blob([fullText], { type: 'application/msword' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = file.name.replace('.pdf', '.doc');
+      a.click();
+      URL.revokeObjectURL(a.href);
+      status.textContent = "Conversion complete. DOC file downloaded!";
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Text to Speech
+  let utterance;
+  function speakText() {
+    const text = document.getElementById("ttsText").value;
+    if (!text) return alert("Enter some text to speak.");
+    utterance = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utterance);
+  }
+  function pauseSpeech() { window.speechSynthesis.pause(); }
+  function resumeSpeech() { window.speechSynthesis.resume(); }
+  function stopSpeech() { window.speechSynthesis.cancel(); }
+</script>
+
 </body>
 </html>
